@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolBox Ultra | Multi-Device Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 70px; } /* Space for bottom nav */
+
+        /* --- HEADER --- */
+        header {
+            background: var(--card);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo { font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+
+        .header-btns { display: flex; gap: 10px; }
+        .icon-btn { 
+            background: #f1f5f9; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--text);
+            display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
+        .icon-btn:hover { background: var(--primary); color: white; }
+
+        /* --- HERO --- */
+        .hero { background: var(--primary); padding: 40px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; }
+        .search-wrapper { max-width: 500px; margin: 20px auto 0; position: relative; }
+        .search-wrapper input { width: 100%; padding: 14px 20px; border-radius: 12px; border: none; outline: none; font-size: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        /* --- LAYOUT --- */
+        .content { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        
+        /* Grid for Tools */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
+        .tool-card { background: var(--card); padding: 20px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .card-head { font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; color: var(--primary); }
+        
+        .tool-link { display: flex; justify-content: space-between; padding: 12px 0; color: var(--text); text-decoration: none; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .tool-link:hover { color: var(--primary); transform: translateX(5px); transition: 0.3s; }
+
+        /* --- ALL TOOLS BUTTON OVERLAY --- */
+        .all-tools-btn {
+            background: var(--primary); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin: 20px 0;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+
+        /* --- QUICK CALCULATOR --- */
+        .calc-box { background: #1e293b; color: white; padding: 20px; border-radius: 20px; margin-bottom: 30px; }
+        #display { background: #000; height: 55px; border-radius: 10px; margin-bottom: 12px; text-align: right; padding: 12px; font-size: 24px; font-family: monospace; color: #10b981; }
+        .btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn-row button { padding: 12px; border-radius: 8px; border: none; background: #334155; color: white; font-weight: 600; font-size: 16px; cursor: pointer; }
+        .btn-row .op { background: var(--primary); }
+
+        /* --- BOTTOM NAVIGATION (MOBILE ONLY) --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: white; border-top: 1px solid #e2e8f0;
+            display: none; justify-content: space-around; align-items: center; z-index: 2000;
+        }
+        .nav-item { text-align: center; text-decoration: none; color: var(--muted); font-size: 11px; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .bottom-nav { display: flex; }
+            .header-btns .icon-btn:not(.home-btn) { display: none; }
+            .hero h1 { font-size: 22px; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">BOX<span>TOOL</span></a>
+    <div class="header-btns">
+        <a href="index.html" class="icon-btn home-btn">🏠 Home</a>
+        <button class="icon-btn" onclick="alert('Scientific Mode Coming Soon!')">🧪 Scientific</button>
+        <button class="icon-btn" onclick="toggleSearch()">🔍 Search</button>
+    </div>
+</header>
+
+<div class="hero">
+    <h1>Smart Toolbox</h1>
+    <p style="opacity: 0.8; font-size: 14px;">One place for all calculations</p>
+    <div class="search-wrapper">
+        <input type="text" placeholder="Search for tools..." id="toolSearch">
+    </div>
+</div>
+
+<div class="content">
+    
+    <div class="calc-box">
+        <div id="display">0</div>
+        <div class="btn-row">
+            <button onclick="clearScr()" style="background:#ef4444">AC</button>
+            <button onclick="press('%')" class="op">%</button>
+            <button onclick="press('/')" class="op">÷</button>
+            <button onclick="press('*')" class="op">×</button>
+            <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+            <button onclick="press('-')" class="op">-</button>
+            <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+            <button onclick="press('+')" class="op">+</button>
+            <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+            <button onclick="solve()" style="background:#10b981; grid-row: span 2; height: 100%;">=</button>
+            <button onclick="press('0')" style="grid-column: span 2;">0</button>
+            <button onclick="press('.')">.</button>
+        </div>
+    </div>
+
+    <button class="all-tools-btn" onclick="window.scrollTo({top: 800, behavior: 'smooth'})">
+        📂 View All Categories Below
+    </button>
+
+    <div class="tools-grid">
+        <div class="tool-card">
+            <div class="card-head">🏦 Finance</div>
+            <div class="tool-list">
+                <a href="#" class="tool-link">Mortgage Calculator <span>></span></a>
+                <a href="#" class="tool-link">EMI Calculator <span>></span></a>
+                <a href="#" class="tool-link">Compound Interest <span>></span></a>
+                <a href="#" class="tool-link">Investment Calculator <span>></span></a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="card-head">❤️ Health</div>
+            <div class="tool-list">
+                <a href="#" class="tool-link">BMI Calculator <span>></span></a>
+                <a href="#" class="tool-link">Calorie Burner <span>></span></a>
+                <a href="#" class="tool-link">Ideal Weight <span>></span></a>
+                <a href="#" class="tool-link">BMR Tracker <span>></span></a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="card-head">📐 Math</div>
+            <div class="tool-list">
+                <a href="#" class="tool-link">Percentage Calc <span>></span></a>
+                <a href="#" class="tool-link">Scientific Calc <span>></span></a>
+                <a href="#" class="tool-link">Triangle Solver <span>></span></a>
+                <a href="#" class="tool-link">Fraction Calc <span>></span></a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="card-head">⚙️ Others</div>
+            <div class="tool-list">
+                <a href="#" class="tool-link">Age Calculator <span>></span></a>
+                <a href="#" class="tool-link">Password Gen <span>></span></a>
+                <a href="#" class="tool-link">Unit Converter <span>></span></a>
+                <a href="#" class="tool-link">GPA Calculator <span>></span></a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+        <span class="nav-icon">🏠</span> Home
+    </a>
+    <a href="#" class="nav-item" onclick="alert('Category menu open')">
+        <span class="nav-icon">📦</span> Categories
+    </a>
+    <a href="#" class="nav-item" onclick="alert('All tools sorted A-Z')">
+        <span class="nav-icon">📋</span> All Tools
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">👤</span> Profile
+    </a>
+</div>
+
+<script>
+    // Calculator Script
+    let disp = document.getElementById('display');
+    function press(v) { if(disp.innerText === '0') disp.innerText = v; else disp.innerText += v; }
+    function clearScr() { disp.innerText = '0'; }
+    function solve() { try { disp.innerText = eval(disp.innerText); } catch { disp.innerText = "Error"; setTimeout(clearScr, 1000); } }
+
+    // Search Logic
+    document.getElementById('toolSearch').addEventListener('keyup', function(e){
+        let query = e.target.value.toLowerCase();
+        let links = document.querySelectorAll('.tool-link');
+        links.forEach(link => {
+            if(link.innerText.toLowerCase().includes(query)){
+                link.parentElement.parentElement.style.display = "block";
+                link.style.display = "flex";
+            } else {
+                link.style.display = "none";
+            }
+        });
+    });
+
+    function toggleSearch() {
+        document.getElementById('toolSearch').focus();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+
+</body>
+</html>
